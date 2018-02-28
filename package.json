@@ -6,6 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "bin": {
+    "templgen": "bin/templgen"
+  },
   "author": "",
   "license": "ISC",
   "devDependencies": {
@@ -22,5 +25,11 @@
     "pegjs": "^0.10.0",
     "streamqueue": "^1.1.2",
     "typescript": "^2.7.2"
+  },
+  "dependencies": {
+    "@types/args": "^3.0.0",
+    "@types/mz": "0.0.32",
+    "@types/yargs": "^11.0.0",
+    "yargs": "^11.0.0"
   }
 }

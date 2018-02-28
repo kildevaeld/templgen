@@ -1,0 +1,256 @@
+{
+  "value": {
+    "value": [
+      {
+        "name": "BlogEntryModel",
+        "properties": [
+          {
+            "name": "title",
+            "type": {
+              "type": 1,
+              "nodeType": 16
+            },
+            "nodeType": 15
+          },
+          {
+            "name": "publishedAt",
+            "type": {
+              "type": 5,
+              "nodeType": 16
+            },
+            "nodeType": 15
+          }
+        ],
+        "nodeType": 19
+      },
+      {
+        "name": "BlogPageModel",
+        "properties": [
+          {
+            "name": "title",
+            "type": {
+              "type": 1,
+              "nodeType": 16
+            },
+            "nodeType": 15
+          },
+          {
+            "name": "entries",
+            "type": {
+              "type": {
+                "name": "BlogEntryModel",
+                "nodeType": 21
+              },
+              "nodeType": 22
+            },
+            "nodeType": 15
+          }
+        ],
+        "nodeType": 19
+      },
+      {
+        "name": "BlogEntry",
+        "parameters": [
+          {
+            "name": "i",
+            "type": {
+              "type": 2,
+              "nodeType": 16
+            },
+            "nodeType": 20
+          },
+          {
+            "name": "entry",
+            "type": {
+              "name": "BlogEntryModel",
+              "nodeType": 21
+            },
+            "nodeType": 20
+          }
+        ],
+        "body": {
+          "value": [
+            {
+              "value": "\n<li id=\"",
+              "nodeType": 1
+            },
+            {
+              "expression": {
+                "names": [
+                  "i"
+                ],
+                "nodeType": 17
+              },
+              "modifier": null,
+              "nodeType": 5
+            },
+            {
+              "value": "\">",
+              "nodeType": 1
+            },
+            {
+              "expression": {
+                "names": [
+                  "entry",
+                  "title"
+                ],
+                "nodeType": 17
+              },
+              "modifier": null,
+              "nodeType": 5
+            },
+            {
+              "value": "</li>\n",
+              "nodeType": 1
+            }
+          ],
+          "nodeType": 18
+        },
+        "nodeType": 11
+      },
+      {
+        "name": "BlogEntryList",
+        "parameters": [
+          {
+            "name": "entries",
+            "type": {
+              "type": {
+                "name": "BlogEntryModel",
+                "nodeType": 21
+              },
+              "nodeType": 22
+            },
+            "nodeType": 20
+          }
+        ],
+        "body": {
+          "value": [
+            {
+              "value": "\n</ul>\n    ",
+              "nodeType": 1
+            },
+            {
+              "key": {
+                "value": "i",
+                "nodeType": 4
+              },
+              "value": {
+                "value": "v",
+                "nodeType": 4
+              },
+              "iterator": {
+                "names": [
+                  "entries"
+                ],
+                "nodeType": 17
+              },
+              "body": {
+                "value": [
+                  {
+                    "value": "\n    ",
+                    "nodeType": 1
+                  },
+                  {
+                    "expression": {
+                      "name": "BlogEntry",
+                      "parameters": [
+                        {
+                          "names": [
+                            "i"
+                          ],
+                          "nodeType": 17
+                        },
+                        {
+                          "names": [
+                            "v"
+                          ],
+                          "nodeType": 17
+                        }
+                      ],
+                      "nodeType": 9
+                    },
+                    "modifier": null,
+                    "nodeType": 5
+                  },
+                  {
+                    "value": "\n    ",
+                    "nodeType": 1
+                  }
+                ],
+                "nodeType": 18
+              },
+              "nodeType": 2
+            },
+            {
+              "value": "\n</ul>\n",
+              "nodeType": 1
+            }
+          ],
+          "nodeType": 18
+        },
+        "nodeType": 11
+      },
+      {
+        "name": "BlogPage",
+        "parameters": [
+          {
+            "name": "ctx",
+            "type": {
+              "name": "BlogPageModel",
+              "nodeType": 21
+            },
+            "nodeType": 20
+          }
+        ],
+        "body": {
+          "value": [
+            {
+              "value": "\n<!DOCTYPE html>\n<html>\n<head>\n    <meta charset=\"utf-8\" />\n    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n    <title>",
+              "nodeType": 1
+            },
+            {
+              "expression": {
+                "names": [
+                  "ctx",
+                  "title"
+                ],
+                "nodeType": 17
+              },
+              "modifier": null,
+              "nodeType": 5
+            },
+            {
+              "value": "</title>\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    <link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"main.css\" />\n    <script src=\"main.js\"></script>\n</head>\n<body>\n    <h1>Blog</h1>\n    ",
+              "nodeType": 1
+            },
+            {
+              "expression": {
+                "name": "BlogEntryList",
+                "parameters": [
+                  {
+                    "names": [
+                      "ctx",
+                      "entries"
+                    ],
+                    "nodeType": 17
+                  }
+                ],
+                "nodeType": 9
+              },
+              "modifier": null,
+              "nodeType": 5
+            },
+            {
+              "value": "\n</body>\n</html>\n",
+              "nodeType": 1
+            }
+          ],
+          "nodeType": 18
+        },
+        "nodeType": 11
+      }
+    ],
+    "nodeType": 18
+  },
+  "nodeType": 14
+}
