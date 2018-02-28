@@ -1,0 +1,51 @@
+import { Expression, TemplateExpression, RawExpression, LoopExpression, ConditionalExpression, ArithmeticExpression, OperationExpression, LiteralExpression, FunctionCallExpression, TenaryExpression, BlockExpression, CommentExpression, PropertyExpression, AssignmentExpression, PrimitiveExpression, AccessorExpression, BodyExpression, ContextExpression, ParameterExpression, CustomTypeExpression, ArrayTypeExpression, UserTypeExpression, VariableExpression } from './expressions';
+export interface IExpressionVisitor {
+    visit(expression: Expression): any;
+    visitTemplateExpression(expression: TemplateExpression): any;
+    visitRawExpression(expression: RawExpression): any;
+    visitLoopExpression(expression: LoopExpression): any;
+    visitConditionalExpression(expression: ConditionalExpression): any;
+    visitArithmeticExpression(expression: ArithmeticExpression): any;
+    visitBinaryOperationExpression(expression: OperationExpression): any;
+    visitLiteralExpression(expression: LiteralExpression): any;
+    visitFunctionCallExpression(expression: FunctionCallExpression): any;
+    visitTenaryExpression(expression: TenaryExpression): any;
+    visitBlockExpression(expression: BlockExpression): any;
+    visitCommentExpression(expression: CommentExpression): any;
+    visitContextExpression(expression: ContextExpression): any;
+    visitPropertyExpression(expression: PropertyExpression): any;
+    visitPrimitiveExpression(expression: PrimitiveExpression): any;
+    visitAssignmentExpression(expression: AssignmentExpression): any;
+    visitAccessor(expression: AccessorExpression): any;
+    visitBody(expresison: BodyExpression): any;
+    visitCustomType(expression: CustomTypeExpression): any;
+    visitParamterType(expression: ParameterExpression): any;
+    visitArrayType(expression: ArrayTypeExpression): any;
+    visitUserType(expression: UserTypeExpression): any;
+    visitVariable(expression: VariableExpression): any;
+}
+export declare abstract class AbstractExpressionVisitor implements IExpressionVisitor {
+    visit(expression: Expression): any;
+    abstract visitTemplateExpression(expression: TemplateExpression): any;
+    abstract visitAssignmentExpression(expression: AssignmentExpression): any;
+    abstract visitRawExpression(expression: RawExpression): any;
+    abstract visitLoopExpression(expression: LoopExpression): any;
+    abstract visitConditionalExpression(expression: ConditionalExpression): any;
+    abstract visitArithmeticExpression(expression: ArithmeticExpression): any;
+    abstract visitBinaryOperationExpression(expression: OperationExpression): any;
+    abstract visitLiteralExpression(expression: LiteralExpression): any;
+    abstract visitFunctionCallExpression(expression: FunctionCallExpression): any;
+    abstract visitTenaryExpression(expression: TenaryExpression): any;
+    abstract visitBlockExpression(expression: BlockExpression): any;
+    abstract visitCommentExpression(expression: CommentExpression): any;
+    abstract visitContextExpression(expression: ContextExpression): any;
+    abstract visitPropertyExpression(expression: PropertyExpression): any;
+    abstract visitPrimitiveExpression(expression: PrimitiveExpression): any;
+    abstract visitAccessor(expression: AccessorExpression): any;
+    abstract visitBody(expression: BodyExpression): any;
+    abstract visitCustomType(expression: CustomTypeExpression): any;
+    abstract visitParamterType(expression: ParameterExpression): any;
+    abstract visitArrayType(expression: ArrayTypeExpression): any;
+    abstract visitUserType(expression: UserTypeExpression): any;
+    abstract visitVariable(expression: VariableExpression): any;
+}

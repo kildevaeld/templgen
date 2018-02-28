@@ -1,0 +1,179 @@
+import {
+    Expression, TemplateExpression, RawExpression, LoopExpression,
+    ConditionalExpression, VariableExpression, ArithmeticExpression,
+    OperationExpression, LiteralExpression, FunctionCallExpression,
+    TenaryExpression, BlockExpression, CommentExpression, MixinExpression, TypeExpression,
+    ContextExpression, PropertyExpression, AssignmentExpression,
+    TagAssignmentExpression, TagExpression, PrimitiveExpression, AccessorExpression, BodyExpression
+} from '../expressions';
+import { Primitive, Token, LiteralType, Operator, MathOperator } from '../types';
+import { AbstractExpressionVisitor } from '../visitor';
+
+
+function isLiteralExp(a: any): a is LiteralExpression {
+    return a instanceof LiteralExpression
+}
+
+function trim(s: string) {
+    return s.replace(/\s+$/, "");
+}
+
+export class TypescriptVisitor extends AbstractExpressionVisitor {
+
+    visitType(expression: TypeExpression) {
+        throw new Error("Method not implemented.");
+    }
+    visitMixin(expression: MixinExpression) {
+        throw new Error("Method not implemented.");
+    }
+    visitBody(expression: BodyExpression) {
+        return expression.body.map(m => this.visit(m)).join('\n');
+    }
+    incontext = false;
+    trim = false;
+    visitAccessor(expression: AccessorExpression) {
+
+        if (this.incontext) return expression.names.join('.');
+
+        return "ctx." + expression.names.join('.');
+    }
+
+
+    visitTemplateExpression(expression: TemplateExpression) {
+        let forEach = `const __fe = (a:any, fn:any) => { let o = "", e; if (Array.isArray(a)) { for (let i = 0, ii = a.length; i < ii; i++) { if ((e = fn(i, a[i]))) o += e;  } } else { for (let k in a) { o += fn(k, a[k]); }} return o; }`
+        let wrap = `const __wrap = (fn:any,ctx:any) => { let r = fn(ctx); if (r!==""&&r!=null) { return r; } return ""; };`
+        let out = `${wrap}\n${forEach}\nexport function template(ctx: any) {\n  let __o = "";\n`;
+        let o = expression.expressions.body.map(m => this.visit(m));
+        out += o.join('\n') + '\nreturn __o;\n};\n';
+        return out;
+
+    }
+
+    visitAssignmentExpression(expression: AssignmentExpression) {
+        if (expression.declaring) {
+            return `let ${expression.name} = $; `
+        }
+    }
+    visitTagAssignmentExpression(expression: TagAssignmentExpression) {
+        if (this.incontext) return this.visit(expression.expression);
+        return "__o += " + this.visit(expression.expression);
+    }
+    visitTagExpression(expression: TagExpression) {
+        throw new Error("Method not implemented.");
+    }
+
+
+    visitRawExpression(expression: RawExpression) {
+        if (this.incontext)
+            return "`" + (this.trim ? trim(expression.value) : '') + "`";
+        return '__o += ' + "`" + expression.value + "`;";
+    }
+    visitLoopExpression(e: LoopExpression) {
+        let out: string[] = [];
+
+        out.push(`__o += __fe(${this.visit(e.iterator)}, (${e.key ? e.key.name : '_'}, ${e.value.name}) => `)
+        this.incontext = true;
+        this.trim = true;
+        out.push(e.body.body.map(m => this.visit(m)).join('+'));
+
+        out.push(`);`);
+        this.incontext = false;
+        this.trim = false;
+        return out.join('')
+    }
+    visitConditionalExpression(expression: ConditionalExpression) {
+
+        let out = [`if (${this.visit(expression.expression)}) { \n${this.incontext ? 'return' : ''} ${this.visit(expression.body)} \n } `];
+
+        if (expression.elif.length) {
+            out.push(...expression.elif.map(m => `else if (${this.visit(m.expression!)}) { \n${this.incontext ? 'return' : ''} ${this.visit(m.body)} \n } `))
+        }
+
+        if (expression.el) {
+            out.push(`else {\n${this.incontext ? 'return' : ''} ${this.visit(expression.el)}\n}`)
+            //out.push(`else { \n${expression.el.body.map(m => this.visit(m))} \n } `)
+        }
+
+        if (this.incontext) {
+            out = ["__wrap(() => {"].concat(out).concat(['}, ctx)']);
+        }
+
+        return out.join('') + '\n';
+
+    }
+    visitVariableExpression(expression: VariableExpression) {
+        console.log(expression)
+        return expression.name;
+    }
+    visitArithmeticExpression(expression: ArithmeticExpression) {
+        if (isLiteralExp(expression.left) && expression.left.literalType == LiteralType.Number &&
+            isLiteralExp(expression.right) && expression.right.literalType == LiteralType.Number
+        ) {
+            return expression.left.value + expression.right.value;
+        }
+
+        let o = (function () {
+            switch (expression.operator) {
+                case MathOperator.Add: return "+";
+                case MathOperator.Div: return "/";
+                case MathOperator.Mod: return "%";
+                case MathOperator.Mul: return "*";
+                case MathOperator.Sub: return "-";
+            }
+        })();
+
+        return this.visit(expression.left) + ` ${o} ` + this.visit(expression.right);
+
+    }
+    visitBinaryOperationExpression(expression: OperationExpression) {
+
+        let out = [this.visit(expression.left)];
+        out.push((function () {
+            switch (expression.operator) {
+                case Operator.Eq: return "==";
+                case Operator.Gt: return ">";
+                case Operator.Gte: return ">=";
+                case Operator.Lt: return "<";
+                case Operator.Lte: return "<=";
+                case Operator.Mod: return "%";
+                case Operator.Neq: return "!=";
+            }
+        })())
+
+        out.push(this.visit(expression.right));
+
+        return out.join(' ');
+    }
+    visitLiteralExpression(expression: LiteralExpression) {
+        switch (expression.literalType) {
+            case LiteralType.String: return `"${expression.value}"`;
+            case LiteralType.Number: return expression.value;
+        }
+    }
+
+    visitFunctionCallExpression(expression: FunctionCallExpression) {
+        return `${expression.name} (${(expression.parameters || []).map(m => this.visit(m))}) `;
+    }
+    visitTenaryExpression(expression: TenaryExpression) {
+        throw new Error("Method not implemented.");
+    }
+    visitBlockExpression(expression: BlockExpression) {
+        throw new Error("Method not implemented.");
+    }
+    visitCommentExpression(expression: CommentExpression) {
+        return `/*\n${expression.comment}\n*/`;
+    }
+    visitContextExpression(expression: ContextExpression) {
+        throw new Error("Method not implemented.");
+    }
+    visitPropertyExpression(expression: PropertyExpression) {
+        return `${expression.name}: ${this.visit(expression.type)} `
+    }
+    visitPrimitiveExpression(expression: PrimitiveExpression) {
+        switch (expression.type) {
+            case Primitive.Int:
+            case Primitive.Float: return 'number';
+            case Primitive.String: return 'string';
+        }
+    }
+}
