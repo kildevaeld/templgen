@@ -222,7 +222,7 @@ export class GolangVisitor extends AbstractExpressionVisitor {
                 }
             } break;
             case Token.Raw:
-                return "buf.WriteString(`" + trim((s as RawExpression).value) + "`)"
+                return "buf.WriteString(`" + trim((s as RawExpression).value.replace(/\n/gm, '\\n')) + "`)"
             case Token.FunctionCall: {
                 let e = (s as FunctionCallExpression);
                 return `${ucfirst(e.name)}(${e.parameters.map(m => {
