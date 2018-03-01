@@ -1,5 +1,5 @@
 
-CustomType = Open "!" t:(__ t:custom_type { return t; })+ __ Close { return t; }
+CustomType =  t:(__ t:custom_type { return t; })+ { return t; }
 
 
 custom_type = "type" __ n:variable __ "{" __ p:type_list __ "}" {

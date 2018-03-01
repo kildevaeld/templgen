@@ -31,6 +31,19 @@ export abstract class Expression {
             }, {})
     }
 
+    copy(): this {
+        let e = new (this.constructor as any)();
+        for (let k in this) {
+            if (!Object.prototype.hasOwnProperty.call(this, k)) continue;
+            if (this[k] instanceof Expression) {
+                e[k] = this[k].copy();
+            } else {
+                e[k] = this[k];
+            }
+        }
+        return e;
+    }
+
     constructor(public position: ExpressionPosition) { }
 }
 

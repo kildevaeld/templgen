@@ -1,9 +1,8 @@
-{%!
+
 type Event {
     name string
     startDate date
 }
-%}
 
 
 {% template eventDetails(event Event) %}

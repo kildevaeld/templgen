@@ -4,6 +4,7 @@ export declare abstract class Expression {
     position: ExpressionPosition;
     readonly abstract nodeType: Token;
     toJSON(full?: boolean, human?: boolean, location?: boolean): {};
+    copy(): this;
     constructor(position: ExpressionPosition);
 }
 export declare class TenaryExpression extends Expression {

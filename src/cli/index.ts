@@ -3,11 +3,18 @@ import * as fs from 'mz/fs';
 import { parse } from '../template_parser';
 import { inspect } from 'util';
 import { Writable } from 'stream';
-
+import { passes } from '../passes'
 async function createAst(argv: yargs.Arguments) {
     let files = argv.files;
     const data = await Promise.all(files.map(m => fs.readFile(m)));
     let asts = data.map(m => parse(m.toString()));
+
+    if (argv.validate) {
+        let out = asts.map(m => passes(m));
+
+        console.log(out)
+        return;
+    }
 
     if (argv.human) {
         asts = asts.map(m => m.toJSON(false, true))
@@ -45,6 +52,9 @@ export function run() {
             type: 'string'
         }).option('human', {
             type: 'boolean',
+            default: false
+        }).option('validate', {
+            alias: 'v',
             default: false
         }),
         handler: (argv) => {

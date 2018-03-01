@@ -1,5 +1,5 @@
 
-{%!
+
 type BlogEntryModel {
     title string
     publishedAt date
@@ -10,7 +10,7 @@ type BlogPageModel {
     entries []BlogEntryModel
 }
 
-%}
+
 
 {% template BlogEntry(i int, entry BlogEntryModel) %}
 <li id="{%= i %}">{%= entry.title %}</li>
