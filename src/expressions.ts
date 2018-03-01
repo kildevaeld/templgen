@@ -60,6 +60,7 @@ export class TenaryExpression extends Expression {
 
 export class FunctionCallExpression extends Expression {
     nodeType = Token.FunctionCall;
+    resolvedAs: TemplateExpression | undefined;
     constructor(location: ExpressionPosition, public name: string, public parameters: Expression[]) {
         super(location)
     }

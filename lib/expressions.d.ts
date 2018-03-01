@@ -18,6 +18,7 @@ export declare class FunctionCallExpression extends Expression {
     name: string;
     parameters: Expression[];
     nodeType: Token;
+    resolvedAs: TemplateExpression | undefined;
     constructor(location: ExpressionPosition, name: string, parameters: Expression[]);
 }
 export declare class OperationExpression extends Expression {

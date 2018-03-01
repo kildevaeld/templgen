@@ -85,7 +85,7 @@ export function run() {
 
     generateCommand(argv);
 
-    argv.argv
+    argv.argv;
 
 
 

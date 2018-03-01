@@ -169,6 +169,7 @@ export class UserValueVisitor extends AbstractExpressionVisitor implements PassV
                     } break;
                 }
             }
+            e.resolvedAs = templ;
 
         }
         return e;

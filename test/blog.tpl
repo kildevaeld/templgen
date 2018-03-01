@@ -1,7 +1,7 @@
 
 import ./models.tpl
 
-{#type BlogEntryModel {
+{# type BlogEntryModel {
     title string
     publishedAt date
 }
@@ -10,8 +10,6 @@ type BlogPageModel {
     title string
     entries []BlogEntryModel
 #}
-
-
 
 {% template BlogEntry(i int, entry BlogEntryModel) %}
 <li id="{%= i %}">{%= entry.title %}</li>

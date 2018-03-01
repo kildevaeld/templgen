@@ -94,8 +94,6 @@ export class GolangVisitor extends AbstractExpressionVisitor {
         if (expression.el) {
             out.push(`else {\n${this.visit(expression.el)}\n}`)
         }
-
-
         return out.join('') + '\n';
 
     }
@@ -148,6 +146,11 @@ export class GolangVisitor extends AbstractExpressionVisitor {
     }
 
     visitFunctionCallExpression(expression: FunctionCallExpression) {
+
+        let params = expression.parameters.map(m => {
+            let e = (m as any).resolvedAs || m;
+        })
+
         return `${expression.name} (${(expression.parameters || []).map(m => this.visit(m))}) `;
     }
     visitTenaryExpression(expression: TenaryExpression) {
@@ -209,7 +212,7 @@ export class GolangVisitor extends AbstractExpressionVisitor {
                     case Primitive.String:
                         return `buf.WriteString(${key})`;
                     case Primitive.Int:
-                        return `hero.FormatInt(uint64(${key}), buf)`
+                        return `hero.FormatInt(int64(${key}), buf)`
                     case Primitive.Float:
                         return `hero.FormatFloat(float64(${key}), buf)`
                     case Primitive.Date:
@@ -222,7 +225,15 @@ export class GolangVisitor extends AbstractExpressionVisitor {
                 return "buf.WriteString(`" + trim((s as RawExpression).value) + "`)"
             case Token.FunctionCall: {
                 let e = (s as FunctionCallExpression);
-                return `${ucfirst(e.name)}(${e.parameters.map(m => this.visit(m)).join(', ')}, buf)`
+                return `${ucfirst(e.name)}(${e.parameters.map(m => {
+                    if (m.nodeType === Token.Accessor) {
+                        let a = m as AccessorExpression;
+                        if (a.resolvedAs!.nodeType === Token.CustomType) {
+                            return '&' + this.visit(m);
+                        }
+                    }
+                    return this.visit(m)
+                }).join(', ')}, buf)`
             }
             default:
                 throw new Error('write ' + s);
