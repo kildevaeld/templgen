@@ -10,13 +10,10 @@ async function createAst(argv: yargs.Arguments) {
     let asts = data.map(m => parse(m.toString()));
 
     if (argv.validate) {
-        let out = asts.map(m => passes(m));
-
-        console.log(out)
-        return;
+        asts = await Promise.all(asts.map(m => passes(m)));
     }
 
-    if (argv.human) {
+    if (argv.pretty) {
         asts = asts.map(m => m.toJSON(false, true))
     }
 
@@ -50,11 +47,13 @@ export function run() {
         }).option('output', {
             alias: ['o'],
             type: 'string'
-        }).option('human', {
+        }).option('pretty', {
+            alias: ['p'],
             type: 'boolean',
             default: false
         }).option('validate', {
             alias: 'v',
+            type: 'boolean',
             default: false
         }),
         handler: (argv) => {

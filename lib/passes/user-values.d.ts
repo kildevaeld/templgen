@@ -1,12 +1,13 @@
 import { AbstractExpressionVisitor } from '../visitor';
 import { Expression, TemplateExpression, RawExpression, LoopExpression, ConditionalExpression, ArithmeticExpression, OperationExpression, LiteralExpression, FunctionCallExpression, TenaryExpression, BlockExpression, CommentExpression, PropertyExpression, AssignmentExpression, VariableExpression, PrimitiveExpression, AccessorExpression, BodyExpression, ContextExpression, ParameterExpression, CustomTypeExpression, ArrayTypeExpression, UserTypeExpression } from '../expressions';
 import { ExpressionPosition } from '../template_parser';
+import { PassVisitor } from './common';
 export declare class SemanticError extends Error {
     location: ExpressionPosition;
     message: string;
     constructor(location: ExpressionPosition, message: string);
 }
-export declare class UserValueVisitor extends AbstractExpressionVisitor {
+export declare class UserValueVisitor extends AbstractExpressionVisitor implements PassVisitor {
     resolves: AccessorExpression[];
     types: CustomTypeExpression[];
     templates: TemplateExpression[];
@@ -14,7 +15,8 @@ export declare class UserValueVisitor extends AbstractExpressionVisitor {
         [key: string]: any;
     };
     first: boolean;
-    parse(e: ContextExpression): ContextExpression;
+    name: string;
+    parse(e: ContextExpression): Promise<ContextExpression>;
     visit(e: Expression): any;
     visitTemplateExpression(e: TemplateExpression): TemplateExpression;
     visitAssignmentExpression(e: AssignmentExpression): AssignmentExpression;

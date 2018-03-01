@@ -9,6 +9,7 @@ import {
 } from '../expressions';
 import { Token, Primitive } from '../types';
 import { ExpressionPosition } from '../template_parser';
+import { PassVisitor } from './common';
 
 export class SemanticError extends Error {
     constructor(public location: ExpressionPosition, public message: string) {
@@ -17,7 +18,7 @@ export class SemanticError extends Error {
     }
 }
 
-export class UserValueVisitor extends AbstractExpressionVisitor {
+export class UserValueVisitor extends AbstractExpressionVisitor implements PassVisitor {
     resolves: AccessorExpression[] = [];
     types: CustomTypeExpression[] = [];
     templates: TemplateExpression[] = [];
@@ -25,13 +26,12 @@ export class UserValueVisitor extends AbstractExpressionVisitor {
 
     first = true;
 
-    parse(e: ContextExpression): ContextExpression {
+    name = "Types";
+
+    async parse(e: ContextExpression): Promise<ContextExpression> {
         e = this.visit(e);
         this.first = false;
         e = this.visit(e);
-
-        //console.log(this)
-
         return e;
     }
 
