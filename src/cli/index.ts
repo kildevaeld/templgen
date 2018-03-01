@@ -6,6 +6,8 @@ import { Writable } from 'stream';
 import { passes } from '../passes'
 import * as Path from 'path';
 
+import { generateCommand } from './generate';
+
 
 async function createAst(argv: yargs.Arguments) {
     let files = argv.files;
@@ -79,7 +81,11 @@ export function run() {
         }
     })
         .help()
-        .argv;
+
+
+    generateCommand(argv);
+
+    argv.argv
 
 
 
