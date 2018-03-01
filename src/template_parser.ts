@@ -11,7 +11,9 @@ export interface ExpressionPosition {
     end: Position
 }
 
-export declare function parse(input: string): any;
+import { ContextExpression } from './expressions';
+
+export declare function parse(input: string): ContextExpression;
 
 export interface SyntaxError extends Error {
     message: string;

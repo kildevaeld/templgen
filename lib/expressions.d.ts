@@ -3,7 +3,7 @@ import { ExpressionPosition } from './template_parser';
 export declare abstract class Expression {
     position: ExpressionPosition;
     readonly abstract nodeType: Token;
-    toJSON(full?: boolean, human?: boolean, location?: boolean): {};
+    toJSON(human?: boolean, location?: boolean): {};
     copy(): this;
     constructor(position: ExpressionPosition);
 }
@@ -56,6 +56,7 @@ export declare class TemplateExpression extends Expression {
     parameters: ParameterExpression[];
     body: BodyExpression;
     nodeType: Token;
+    contextId: string | undefined;
     constructor(location: ExpressionPosition, name: string, parameters: ParameterExpression[], body: BodyExpression);
 }
 export declare class LoopExpression extends Expression {
@@ -106,6 +107,7 @@ export declare class CustomTypeExpression extends Expression {
     name: string;
     properties: PropertyExpression[];
     nodeType: Token;
+    contextId: string | undefined;
     constructor(location: ExpressionPosition, name: string, properties: PropertyExpression[]);
 }
 export declare class ParameterExpression extends Expression {
@@ -117,6 +119,9 @@ export declare class ParameterExpression extends Expression {
 export declare class ContextExpression extends Expression {
     value: BodyExpression;
     nodeType: Token;
+    imports: ContextExpression[];
+    file: string | undefined;
+    id: string | undefined;
     constructor(location: ExpressionPosition, value: BodyExpression);
 }
 export declare abstract class TypeExpression extends Expression {
@@ -142,5 +147,11 @@ export declare class VariableExpression extends Expression {
     nodeType: Token;
     resolvedAs: PrimitiveExpression | CustomTypeExpression | ArrayTypeExpression | undefined;
     constructor(location: ExpressionPosition, value: string);
+}
+export declare class ImportExpression extends Expression {
+    path: string;
+    nodeType: Token;
+    resolvedAs: ContextExpression | undefined;
+    constructor(location: ExpressionPosition, path: string);
 }
 export declare function createExpression(type: Token, position: ExpressionPosition, ...args: any[]): Expression;

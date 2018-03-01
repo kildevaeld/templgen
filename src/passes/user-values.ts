@@ -1,6 +1,6 @@
 import { AbstractExpressionVisitor } from '../visitor';
 import {
-    Expression, TemplateExpression, RawExpression, LoopExpression,
+    Expression, ImportExpression, TemplateExpression, RawExpression, LoopExpression,
     ConditionalExpression, ArithmeticExpression, OperationExpression,
     LiteralExpression, FunctionCallExpression, TenaryExpression, BlockExpression,
     CommentExpression, PropertyExpression, AssignmentExpression, VariableExpression,
@@ -10,6 +10,7 @@ import {
 import { Token, Primitive } from '../types';
 import { ExpressionPosition } from '../template_parser';
 import { PassVisitor } from './common';
+import { flatten } from '../utils';
 
 export class SemanticError extends Error {
     constructor(public location: ExpressionPosition, public message: string) {
@@ -19,6 +20,7 @@ export class SemanticError extends Error {
 }
 
 export class UserValueVisitor extends AbstractExpressionVisitor implements PassVisitor {
+
     resolves: AccessorExpression[] = [];
     types: CustomTypeExpression[] = [];
     templates: TemplateExpression[] = [];
@@ -31,8 +33,17 @@ export class UserValueVisitor extends AbstractExpressionVisitor implements PassV
     async parse(e: ContextExpression): Promise<ContextExpression> {
         e = this.visit(e);
         this.first = false;
+
+        let types = flatten(e.imports.map(m => m.value.value.filter(m => m.nodeType === Token.CustomType))) as CustomTypeExpression[];
+        this.types = this.types.concat(types);
+
+        let templates = flatten(e.imports.map(m => m.value.value.filter(m => m.nodeType === Token.Template))) as TemplateExpression[];
+        this.templates = this.templates.concat(templates);
+
         e = this.visit(e);
+
         return e;
+
     }
 
     visit(e: Expression) {
@@ -261,6 +272,10 @@ export class UserValueVisitor extends AbstractExpressionVisitor implements PassV
                 throw new Error(`variable ${e.value}`);
             (e as any).resolvedAs = type;
         }*/
+        return e;
+    }
+
+    visitImport(e: ImportExpression) {
         return e;
     }
 }

@@ -10,7 +10,7 @@ const gulp = require('gulp'),
 
 
 const grammars = [
-    'index', 'tags', 'expression', 'binary-operation',
+    'index', 'import', 'tags', 'expression', 'binary-operation',
     'literals', 'math', 'context', 'function-call',
     'template', 'type', 'common'
 ];

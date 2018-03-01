@@ -5,10 +5,10 @@ import { ExpressionPosition } from './template_parser';
 export abstract class Expression {
     abstract readonly nodeType: Token
 
-    toJSON(full: boolean = false, human: boolean = false, location: boolean = false) {
-        if (full === true) return this;
+    toJSON(human: boolean = false, location: boolean = false) {
+
         return Object.keys(this)
-            .filter((key) => ['position'].indexOf(key) < 0)
+            .filter((key) => location ? true : ['position'].indexOf(key) < 0)
             .reduce((newObj, key) => {
                 var val = (this as any)[key];
                 if (key === "nodeType" && human) {
@@ -18,13 +18,15 @@ export abstract class Expression {
                 }
 
                 if (val instanceof Expression) {
-                    val = val.toJSON(full, human, location);
+                    val = val.toJSON(human, location);
                     //return Object.assign(newObj, {[key]: this[key].toJSON(full, human)});
                 } else if (Array.isArray(val)) {
                     val = val.map(m => {
-                        if (m instanceof Expression) return m.toJSON(full, human, location);
+                        if (m instanceof Expression) return m.toJSON(human, location);
                         return m;
                     })
+                } else if (key == "type") {
+                    val = Primitive[val];
                 }
 
                 return Object.assign(newObj, { [key]: val })
@@ -48,21 +50,6 @@ export abstract class Expression {
 }
 
 
-/*export class AssignmentExpression extends Expression {
-    nodeType = Token.Assignment;
-    constructor(location: ExpressionPosition, public name: string, public expression: Expression, public declaring: boolean) {
-        super(location)
-    }
-}*/
-
-
-
-/*export class VariableExpression extends Expression {
-    nodeType = Token.Variable;
-    constructor(location: ExpressionPosition, public name: string) {
-        super(location)
-    }
-}*/
 
 export class TenaryExpression extends Expression {
     nodeType = Token.Tenary;
@@ -115,15 +102,10 @@ export class AssignmentExpression extends Expression {
     }
 }
 
-/*export class TagExpression extends Expression {
-    nodeType = Token.Tag;
-    constructor(location: ExpressionPosition, public expression: Expression) {
-        super(location)
-    }
-}*/
 
 export class TemplateExpression extends Expression {
     nodeType = Token.Template;
+    contextId: string | undefined;
     constructor(location: ExpressionPosition, public name: string, public parameters: ParameterExpression[], public body: BodyExpression) {
         super(location);
     }
@@ -156,13 +138,7 @@ export class CommentExpression extends Expression {
         super(location);
     }
 }
-/*
-export class ContextExpression extends Expression {
-    nodeType = Token.Context;
-    constructor(location: ExpressionPosition, public properties: PropertyExpression[]) {
-        super(location);
-    }
-}*/
+
 
 export class PropertyExpression extends Expression {
     nodeType = Token.Property;
@@ -189,16 +165,10 @@ export class BodyExpression extends Expression {
     }
 }
 
-/*export class MixinExpression extends Expression {
-    nodeType = Token.Mixin;
-    constructor(location: ExpressionPosition, public name: VariableExpression, public params: string[], public body: BodyExpression) {
-        super(location);
-    }
-}*/
-
 
 export class CustomTypeExpression extends Expression {
     nodeType = Token.CustomType;
+    contextId: string | undefined;
     constructor(location: ExpressionPosition, public name: string, public properties: PropertyExpression[]) {
         super(location);
     }
@@ -213,6 +183,9 @@ export class ParameterExpression extends Expression {
 
 export class ContextExpression extends Expression {
     nodeType = Token.Context;
+    imports: ContextExpression[] = [];
+    file: string | undefined;
+    id: string | undefined;
     constructor(location: ExpressionPosition, public value: BodyExpression) {
         super(location);
     }
@@ -252,6 +225,14 @@ export class VariableExpression extends Expression {
     }
 }
 
+export class ImportExpression extends Expression {
+    nodeType = Token.Import;
+    resolvedAs: ContextExpression | undefined;
+    constructor(location: ExpressionPosition, public path: string) {
+        super(location);
+    }
+}
+
 export function createExpression(type: Token, position: ExpressionPosition, ...args: any[]): Expression {
     switch (type) {
         case Token.Assignment: return new AssignmentExpression(position, args[0], args[1]);
@@ -277,7 +258,7 @@ export function createExpression(type: Token, position: ExpressionPosition, ...a
         case Token.Parameter: return new ParameterExpression(position, args[0], args[1]);
         case Token.UserType: return new UserTypeExpression(position, args[0]);
         case Token.Array: return new ArrayTypeExpression(position, args[0]);
-
+        case Token.Import: return new ImportExpression(position, args[0]);
         /*case Token.Tag: {
             switch (args[0]) {
                 case TagType.Assignment:

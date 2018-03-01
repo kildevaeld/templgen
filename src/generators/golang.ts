@@ -1,6 +1,6 @@
 import {
     Expression, TemplateExpression, RawExpression, LoopExpression,
-    ConditionalExpression, ArithmeticExpression,
+    ConditionalExpression, ArithmeticExpression, ImportExpression,
     OperationExpression, LiteralExpression, FunctionCallExpression,
     TenaryExpression, BlockExpression, CommentExpression, TypeExpression, UserTypeExpression,
     ContextExpression, PropertyExpression, AssignmentExpression, PrimitiveExpression,
@@ -233,6 +233,10 @@ export class GolangVisitor extends AbstractExpressionVisitor {
 
     visitVariable(e: VariableExpression): any {
         return e.value;
+    }
+
+    visitImport(e: ImportExpression): any {
+
     }
 
 }

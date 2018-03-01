@@ -37,7 +37,7 @@ start_body = first:start_body_type rest:( __  s:start_body_type { return s; })* 
     return expression(Token.Body, flatten([first].concat(rest)));
 }
 
-start_body_type = CustomType / Template / Comment
+start_body_type = Import / CustomType / Template / Comment
 
 body = b:( Tag / Comment / content )+ {
     return expression(Token.Body, flatten(b));

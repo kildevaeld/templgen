@@ -4,24 +4,36 @@ import { parse } from '../template_parser';
 import { inspect } from 'util';
 import { Writable } from 'stream';
 import { passes } from '../passes'
+import * as Path from 'path';
+
+
 async function createAst(argv: yargs.Arguments) {
     let files = argv.files;
-    const data = await Promise.all(files.map(m => fs.readFile(m)));
-    let asts = data.map(m => parse(m.toString()));
+    const data = await Promise.all<{ file: string; buffer: Buffer }>(files.map((m: string) => fs.readFile(m).then(buf => ({
+        file: Path.resolve(m),
+        buffer: buf
+    }))));
 
+    let asts = data.map(m => {
+        let o = parse(m.buffer.toString());
+        o.file = m.file;
+        return o;
+    });
+
+    let array: any[] = asts;
     if (argv.validate) {
         asts = await Promise.all(asts.map(m => passes(m)));
     }
 
     if (argv.pretty) {
-        asts = asts.map(m => m.toJSON(false, true))
+        array = asts.map(m => m.toJSON(true, argv.trace))
     }
 
     let text: string = '';
     if (argv.json) {
-        text = JSON.stringify(asts.length > 1 ? asts : asts[0], null, 2);
+        text = JSON.stringify(array.length > 1 ? array : array[0], null, 2);
     } else {
-        text = inspect(asts.length > 1 ? asts : asts[0], false, 20, !argv.output);
+        text = inspect(array.length > 1 ? array : array[0], false, 20, !argv.output);
     }
 
     let output: Writable = process.stdout;
@@ -55,9 +67,15 @@ export function run() {
             alias: 'v',
             type: 'boolean',
             default: false
+        }).option('trace', {
+            alias: 't',
+            type: 'boolean',
+            default: false
         }),
         handler: (argv) => {
-            createAst(argv);
+            createAst(argv).catch(e => {
+                console.error(e.message);
+            })
         }
     })
         .help()

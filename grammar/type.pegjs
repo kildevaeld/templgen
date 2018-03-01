@@ -1,8 +1,8 @@
 
-CustomType =  t:(__ t:custom_type { return t; })+ { return t; }
+//CustomType =  t:(__ t:custom_type { return t; })+ { return t; }
 
 
-custom_type = "type" __ n:variable __ "{" __ p:type_list __ "}" {
+CustomType = "type" __ n:variable __ "{" __ p:type_list __ "}" {
     return expression(Token.CustomType, n, p);
 }
 

@@ -4,7 +4,7 @@ import {
     LiteralExpression, FunctionCallExpression, TenaryExpression, BlockExpression,
     CommentExpression, PropertyExpression, AssignmentExpression,
     PrimitiveExpression, AccessorExpression, BodyExpression, ContextExpression,
-    ParameterExpression, CustomTypeExpression, ArrayTypeExpression, UserTypeExpression, VariableExpression,
+    ParameterExpression, CustomTypeExpression, ArrayTypeExpression, UserTypeExpression, VariableExpression, ImportExpression,
 } from './expressions';
 import { Primitive, Token } from './types';
 
@@ -39,6 +39,7 @@ export interface IExpressionVisitor {
     visitArrayType(expression: ArrayTypeExpression): any;
     visitUserType(expression: UserTypeExpression): any;
     visitVariable(expression: VariableExpression): any;
+    visitImport(expression: ImportExpression): any;
 }
 
 
@@ -69,6 +70,7 @@ export abstract class AbstractExpressionVisitor implements IExpressionVisitor {
             case Token.UserType: return this.visitUserType(expression as any);
             case Token.CustomType: return this.visitCustomType(expression as any);
             case Token.Variable: return this.visitVariable(expression as any);
+            case Token.Import: return this.visitImport(expression as any);
             //case Token.Mixin: return this.visitMixin(expression as any);
             //case Token.Type: return this.visitType(expression as any);
             /*case Token.Tag: {
@@ -106,6 +108,7 @@ export abstract class AbstractExpressionVisitor implements IExpressionVisitor {
     abstract visitArrayType(expression: ArrayTypeExpression): any;
     abstract visitUserType(expression: UserTypeExpression): any;
     abstract visitVariable(expression: VariableExpression): any;
+    abstract visitImport(expression: ImportExpression): any;
 }
 
 

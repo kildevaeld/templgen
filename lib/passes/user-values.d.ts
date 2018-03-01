@@ -1,5 +1,5 @@
 import { AbstractExpressionVisitor } from '../visitor';
-import { Expression, TemplateExpression, RawExpression, LoopExpression, ConditionalExpression, ArithmeticExpression, OperationExpression, LiteralExpression, FunctionCallExpression, TenaryExpression, BlockExpression, CommentExpression, PropertyExpression, AssignmentExpression, VariableExpression, PrimitiveExpression, AccessorExpression, BodyExpression, ContextExpression, ParameterExpression, CustomTypeExpression, ArrayTypeExpression, UserTypeExpression } from '../expressions';
+import { Expression, ImportExpression, TemplateExpression, RawExpression, LoopExpression, ConditionalExpression, ArithmeticExpression, OperationExpression, LiteralExpression, FunctionCallExpression, TenaryExpression, BlockExpression, CommentExpression, PropertyExpression, AssignmentExpression, VariableExpression, PrimitiveExpression, AccessorExpression, BodyExpression, ContextExpression, ParameterExpression, CustomTypeExpression, ArrayTypeExpression, UserTypeExpression } from '../expressions';
 import { ExpressionPosition } from '../template_parser';
 import { PassVisitor } from './common';
 export declare class SemanticError extends Error {
@@ -40,4 +40,5 @@ export declare class UserValueVisitor extends AbstractExpressionVisitor implemen
     visitArrayType(e: ArrayTypeExpression): ArrayTypeExpression;
     visitUserType(e: UserTypeExpression): UserTypeExpression;
     visitVariable(e: VariableExpression): any;
+    visitImport(e: ImportExpression): ImportExpression;
 }

@@ -1,15 +1,38 @@
 export * from './user-values';
+export * from './import';
+
 import { ContextExpression } from '../expressions';
 import { PassVisitor, PassVisitorConstructor } from './common';
 import { UserValueVisitor } from './user-values';
+import { ImportPass } from './import';
+import { uniqueID } from '../utils';
 
 const _passes: PassVisitorConstructor[] = [
+    ImportPass,
     UserValueVisitor
 ]
+
+export class PassVisitorError extends Error {
+    constructor(public passes: { [key: string]: Error }) {
+        super();
+        Object.setPrototypeOf(this, PassVisitorError.prototype);
+    }
+
+    get message() {
+        let str: string[] = [];
+
+        for (let k in this.passes) {
+            str.push(`${k}: ${this.passes[k].message}`);
+        }
+
+        return str.join('')
+    }
+}
 
 export async function passes(e: ContextExpression) {
 
     let copy = e.copy();
+    copy.id = uniqueID();
 
     let errors: { [key: string]: Error } = {};
 
@@ -21,6 +44,11 @@ export async function passes(e: ContextExpression) {
         } catch (e) {
             errors[tmp.name] = e;
         }
+    }
+
+
+    if (Object.keys(errors).length) {
+        throw new PassVisitorError(errors);
     }
 
     return copy;

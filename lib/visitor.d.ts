@@ -1,4 +1,4 @@
-import { Expression, TemplateExpression, RawExpression, LoopExpression, ConditionalExpression, ArithmeticExpression, OperationExpression, LiteralExpression, FunctionCallExpression, TenaryExpression, BlockExpression, CommentExpression, PropertyExpression, AssignmentExpression, PrimitiveExpression, AccessorExpression, BodyExpression, ContextExpression, ParameterExpression, CustomTypeExpression, ArrayTypeExpression, UserTypeExpression, VariableExpression } from './expressions';
+import { Expression, TemplateExpression, RawExpression, LoopExpression, ConditionalExpression, ArithmeticExpression, OperationExpression, LiteralExpression, FunctionCallExpression, TenaryExpression, BlockExpression, CommentExpression, PropertyExpression, AssignmentExpression, PrimitiveExpression, AccessorExpression, BodyExpression, ContextExpression, ParameterExpression, CustomTypeExpression, ArrayTypeExpression, UserTypeExpression, VariableExpression, ImportExpression } from './expressions';
 export interface IExpressionVisitor {
     visit(expression: Expression): any;
     visitTemplateExpression(expression: TemplateExpression): any;
@@ -23,6 +23,7 @@ export interface IExpressionVisitor {
     visitArrayType(expression: ArrayTypeExpression): any;
     visitUserType(expression: UserTypeExpression): any;
     visitVariable(expression: VariableExpression): any;
+    visitImport(expression: ImportExpression): any;
 }
 export declare abstract class AbstractExpressionVisitor implements IExpressionVisitor {
     visit(expression: Expression): any;
@@ -48,4 +49,5 @@ export declare abstract class AbstractExpressionVisitor implements IExpressionVi
     abstract visitArrayType(expression: ArrayTypeExpression): any;
     abstract visitUserType(expression: UserTypeExpression): any;
     abstract visitVariable(expression: VariableExpression): any;
+    abstract visitImport(expression: ImportExpression): any;
 }

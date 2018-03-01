@@ -1,4 +1,4 @@
-import { Expression, TemplateExpression, RawExpression, LoopExpression, ConditionalExpression, ArithmeticExpression, OperationExpression, LiteralExpression, FunctionCallExpression, TenaryExpression, BlockExpression, CommentExpression, UserTypeExpression, ContextExpression, PropertyExpression, AssignmentExpression, PrimitiveExpression, AccessorExpression, BodyExpression, CustomTypeExpression, ParameterExpression, ArrayTypeExpression, VariableExpression } from '../expressions';
+import { Expression, TemplateExpression, RawExpression, LoopExpression, ConditionalExpression, ArithmeticExpression, ImportExpression, OperationExpression, LiteralExpression, FunctionCallExpression, TenaryExpression, BlockExpression, CommentExpression, UserTypeExpression, ContextExpression, PropertyExpression, AssignmentExpression, PrimitiveExpression, AccessorExpression, BodyExpression, CustomTypeExpression, ParameterExpression, ArrayTypeExpression, VariableExpression } from '../expressions';
 import { AbstractExpressionVisitor } from '../visitor';
 import { Options } from './options';
 export interface GolangOptions extends Options {
@@ -31,4 +31,5 @@ export declare class GolangVisitor extends AbstractExpressionVisitor {
     visitUserType(expression: UserTypeExpression): string;
     write(s: Expression): string | undefined;
     visitVariable(e: VariableExpression): any;
+    visitImport(e: ImportExpression): any;
 }

@@ -1,6 +1,7 @@
 
+import ./models.tpl
 
-type BlogEntryModel {
+{#type BlogEntryModel {
     title string
     publishedAt date
 }
@@ -8,7 +9,7 @@ type BlogEntryModel {
 type BlogPageModel {
     title string
     entries []BlogEntryModel
-}
+#}
 
 
 
