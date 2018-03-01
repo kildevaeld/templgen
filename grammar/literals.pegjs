@@ -5,13 +5,13 @@
 
 literal = Number / String 
 
-Boolean = b:boolean { return expression(Token.Literal, LiteralType.Boolean, b); }  
+Boolean = b:boolean { return expression(Token.Literal, Primitive.Boolean, b); }  
 
 boolean = "true" { return true; }
     / "false" { return false; }
 
 
-Number = n:number { return expression(Token.Literal, LiteralType.Number, n)} 
+Number = n:number { return expression(Token.Literal, Primitive.Int, n)} 
 
 // Numbers
 number "number"
@@ -46,7 +46,7 @@ zero
 
 // ----- 7. Strings -----
 
-String = s:string { return expression(Token.Literal, LiteralType.String, s)}
+String = s:string { return expression(Token.Literal, Primitive.String, s)}
 
 string "string"
   = quotation_mark chars:char* quotation_mark { return chars.join(""); }

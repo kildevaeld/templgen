@@ -4,11 +4,6 @@ export declare enum TagType {
     Loop = 3,
     Code = 4,
 }
-export declare enum LiteralType {
-    Number = 0,
-    String = 1,
-    Boolean = 2,
-}
 export declare enum Token {
     Raw = 1,
     Loop = 2,
@@ -32,6 +27,7 @@ export declare enum Token {
     Parameter = 20,
     UserType = 21,
     Array = 22,
+    Import = 23,
 }
 export declare enum MathOperator {
     Add = 1,

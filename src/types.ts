@@ -7,14 +7,12 @@ export enum TagType {
     Code
 }
 
-export enum LiteralType {
-    Number, String, Boolean
-}
+
 
 export enum Token {
-    Raw = 1, /*Tag,*/ Loop, Conditional, Variable, Assignment, Arithmetic, Operation, Literal, FunctionCall,
+    Raw = 1, Loop, Conditional, Variable, Assignment, Arithmetic, Operation, Literal, FunctionCall,
     Tenary, Template, Block, Comment, Context, Property, Primitive, Accessor,
-    Body, /*Mixin,*/ CustomType, Parameter, UserType, Array
+    Body, CustomType, Parameter, UserType, Array, Import
 }
 
 export enum MathOperator {

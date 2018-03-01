@@ -6,7 +6,7 @@ import {
     ContextExpression, PropertyExpression, AssignmentExpression, PrimitiveExpression,
     AccessorExpression, BodyExpression, CustomTypeExpression, ParameterExpression, ArrayTypeExpression, VariableExpression,
 } from '../expressions';
-import { Primitive, Token, LiteralType, Operator, MathOperator } from '../types';
+import { Primitive, Token, Operator, MathOperator } from '../types';
 import { AbstractExpressionVisitor } from '../visitor';
 import { Options } from './options';
 
@@ -102,8 +102,8 @@ export class GolangVisitor extends AbstractExpressionVisitor {
 
 
     visitArithmeticExpression(expression: ArithmeticExpression) {
-        if (isLiteralExp(expression.left) && expression.left.literalType == LiteralType.Number &&
-            isLiteralExp(expression.right) && expression.right.literalType == LiteralType.Number
+        if (isLiteralExp(expression.left) && expression.left.type == Primitive.Int &&
+            isLiteralExp(expression.right) && expression.right.type == Primitive.Int
         ) {
             return expression.left.value + expression.right.value;
         }
@@ -141,9 +141,9 @@ export class GolangVisitor extends AbstractExpressionVisitor {
         return out.join(' ');
     }
     visitLiteralExpression(expression: LiteralExpression) {
-        switch (expression.literalType) {
-            case LiteralType.String: return `"${expression.value}"`;
-            case LiteralType.Number: return expression.value;
+        switch (expression.type) {
+            case Primitive.String: return `"${expression.value}"`;
+            case Primitive.Int: return expression.value;
         }
     }
 

@@ -1,4 +1,4 @@
-import { Token, LiteralType, Operator, MathOperator, Primitive } from './types';
+import { Token, Operator, MathOperator, Primitive } from './types';
 import { ExpressionPosition } from './template_parser';
 export declare abstract class Expression {
     position: ExpressionPosition;
@@ -35,10 +35,10 @@ export declare class ArithmeticExpression extends Expression {
     constructor(location: ExpressionPosition, right: Expression, operator: MathOperator, left: Expression);
 }
 export declare class LiteralExpression extends Expression {
-    literalType: LiteralType;
+    type: Primitive;
     value: string;
     nodeType: Token;
-    constructor(location: ExpressionPosition, literalType: LiteralType, value: string);
+    constructor(location: ExpressionPosition, type: Primitive, value: string);
 }
 export declare class RawExpression extends Expression {
     value: string;

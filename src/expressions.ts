@@ -1,4 +1,4 @@
-import { Token, TagType, LiteralType, Operator, MathOperator, Primitive } from './types';
+import { Token, TagType, Operator, MathOperator, Primitive } from './types';
 import { ExpressionPosition } from './template_parser';
 
 
@@ -94,7 +94,7 @@ export class ArithmeticExpression extends Expression {
 
 export class LiteralExpression extends Expression {
     nodeType = Token.Literal;
-    constructor(location: ExpressionPosition, public literalType: LiteralType, public value: string) {
+    constructor(location: ExpressionPosition, public type: Primitive, public value: string) {
         super(location)
     }
 }
