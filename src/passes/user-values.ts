@@ -40,6 +40,7 @@ export class UserValueVisitor extends AbstractExpressionVisitor implements PassV
         let templates = flatten(e.imports.map(m => m.value.value.filter(m => m.nodeType === Token.Template))) as TemplateExpression[];
         this.templates = this.templates.concat(templates);
 
+
         e = this.visit(e);
 
         return e;
@@ -230,15 +231,35 @@ export class UserValueVisitor extends AbstractExpressionVisitor implements PassV
             } else if (type!.nodeType == Token.UserType && len > 1) {
                 let i = index;
                 let ct = (type as UserTypeExpression).resolvedAs!;
+
                 while (++i < len) {
-                    type = ct.properties.find(m => m.name == e.names[i]);
+
+                    if (e.names[i].match(/\d+/)) {
+                        type = (type as PropertyExpression).type;
+                        if (type.nodeType !== Token.Array) {
+                            throw new Error('cannot index a non array value');
+                        }
+                        type = (type as ArrayTypeExpression).type;
+                        if (type.nodeType == Token.UserType) {
+                            this.visit(type)
+                            ct = (type as any).resolvedAs
+                        }
+
+                    } else {
+                        type = ct.properties.find(m => m.name == e.names[i]);
+                    }
+
                     if (!type) {
+
                         throw new SemanticError(e.position, 'invalid type ' + e.names.slice(0, i + 1).join('.'));
                     }
                     if (type.nodeType == Token.CustomType)
                         ct = type as any;
                     else if (type.nodeType === Token.Array && i < len - 1 && e.names[i + 1].match(/\d+/)) {
                         type = (type as ArrayTypeExpression).type;
+                        if (type.nodeType === Token.UserType)
+                            ct = type as any;
+
                     }
                 }
             }

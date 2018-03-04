@@ -91,7 +91,11 @@ export class GolangVisitor extends AbstractExpressionVisitor {
         out.push('\n}');
         return out.join('');
     }
+
     visitConditionalExpression(expression: ConditionalExpression) {
+
+        let e = expression.expression;
+
 
         let out = [`if ${this.visit(expression.expression)} {\n${this.visit(expression.body)}\n} `];
 
