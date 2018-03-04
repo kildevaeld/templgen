@@ -11,11 +11,18 @@ boolean = "true" { return true; }
     / "false" { return false; }
 
 
-Number = n:number { return expression(Token.Literal, Primitive.Int, n)} 
+Number = Integer / Float;
 
 // Numbers
-number "number"
-  = minus? int frac? exp? { return parseFloat(text()); }
+Integer "integer"
+  = minus? int exp? { 
+    return expression(Token.Literal, Primitive.Float, parseInt(text())); 
+  }
+
+Float "float"
+  = minus? int frac exp? { 
+    return expression(Token.Literal, Primitive.Float, parseFloat(text())); 
+  }
 
 decimal_point
   = "."

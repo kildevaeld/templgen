@@ -37,9 +37,9 @@ export declare class ArithmeticExpression extends Expression {
 }
 export declare class LiteralExpression extends Expression {
     type: Primitive;
-    value: string;
+    value: any;
     nodeType: Token;
-    constructor(location: ExpressionPosition, type: Primitive, value: string);
+    constructor(location: ExpressionPosition, type: Primitive, value: any);
 }
 export declare class RawExpression extends Expression {
     value: string;

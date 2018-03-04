@@ -149,7 +149,9 @@ export class GolangVisitor extends AbstractExpressionVisitor {
     visitLiteralExpression(expression: LiteralExpression) {
         switch (expression.type) {
             case Primitive.String: return `"${expression.value}"`;
-            case Primitive.Int: return expression.value;
+            case Primitive.Float:
+            case Primitive.Int: return expression.value + '';
+            case Primitive.Boolean: return expression.value ? 'true' : 'false'
         }
     }
 

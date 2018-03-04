@@ -1,7 +1,7 @@
-export function flatten(arr) {
-    return arr.reduce(function (flat, toFlatten) {
+export function flatten<T>(arr: any): T[] {
+    return arr.reduce((flat: T[], toFlatten: any) => {
         return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
-    }, []);
+    }, [] as T[]);
 }
 
 export function isString(a: any): a is string {

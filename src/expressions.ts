@@ -82,7 +82,7 @@ export class ArithmeticExpression extends Expression {
 
 export class LiteralExpression extends Expression {
     nodeType = Token.Literal;
-    constructor(location: ExpressionPosition, public type: Primitive, public value: string) {
+    constructor(location: ExpressionPosition, public type: Primitive, public value: any) {
         super(location)
     }
 }
@@ -149,8 +149,6 @@ export class PropertyExpression extends Expression {
 }
 
 
-
-
 export class AccessorExpression extends Expression {
     nodeType = Token.Accessor;
     resolvedAs: Expression | undefined;
@@ -192,9 +190,7 @@ export class ContextExpression extends Expression {
     }
 }
 
-export abstract class TypeExpression extends Expression {
-
-}
+export abstract class TypeExpression extends Expression { }
 
 export class PrimitiveExpression extends TypeExpression {
     nodeType = Token.Primitive;
@@ -254,20 +250,12 @@ export function createExpression(type: Token, position: ExpressionPosition, ...a
         case Token.Primitive: return new PrimitiveExpression(position, args[0]);
         case Token.Accessor: return new AccessorExpression(position, args[0]);
         case Token.Body: return new BodyExpression(position, args[0]);
-        //case Token.Mixin: return new MixinExpression(position, args[0], args[1], args[2]);
         case Token.CustomType: return new CustomTypeExpression(position, args[0], args[1]);
         case Token.Parameter: return new ParameterExpression(position, args[0], args[1]);
         case Token.UserType: return new UserTypeExpression(position, args[0]);
         case Token.Array: return new ArrayTypeExpression(position, args[0]);
         case Token.Import: return new ImportExpression(position, args[0]);
-        /*case Token.Tag: {
-            switch (args[0]) {
-                case TagType.Assignment:
-                    return new TagAssignmentExpression(position, args[1], args[2]);
-                default:
-                    return new TagExpression(position, args[1]);
-            }
-        }*/
+
     }
     console.log(args)
     throw new TypeError("invalid token " + type);
