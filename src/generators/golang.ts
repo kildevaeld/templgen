@@ -111,7 +111,7 @@ export class GolangVisitor extends AbstractExpressionVisitor {
         if (isLiteralExp(expression.left) && expression.left.type == Primitive.Int &&
             isLiteralExp(expression.right) && expression.right.type == Primitive.Int
         ) {
-            return expression.left.value + expression.right.value;
+            return expression.left.value + expression.right.value + '';
         }
 
         let o = (function () {
