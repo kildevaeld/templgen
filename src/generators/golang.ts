@@ -74,7 +74,7 @@ export class GolangVisitor extends AbstractExpressionVisitor {
     }
 
     visitAssignmentExpression(e: AssignmentExpression) {
-        return this.write(e.expression, !!e.modifier);
+        return this.write(e.expression, !!!e.modifier);
     }
 
 
@@ -221,7 +221,8 @@ export class GolangVisitor extends AbstractExpressionVisitor {
                 if (t instanceof PrimitiveExpression) {
                     switch (t.type) {
                         case Primitive.String:
-                            return `buf.WriteString(${escape ? 'hero.EscapeHTML(' + key + ')' : key})`;
+                            return escape ? `hero.EscapeHTML(${key}, buf)` : `buf.WriteString(${key})`
+                        //return `buf.WriteString(${escape ? 'hero.EscapeHTML(' + key + ')' : key})`;
                         case Primitive.Int:
                             return `hero.FormatInt(int64(${key}), buf)`
                         case Primitive.Float:
@@ -232,7 +233,7 @@ export class GolangVisitor extends AbstractExpressionVisitor {
                             return `hero.FormatBool(${key}, buf)`
                     }
                 } else {
-                    throw new Error(`cannot write ${Token[t.nodeType]}`)
+                    throw new Error(`cannot write '${Token[t.nodeType]}'`)
                 }
 
 
