@@ -73,8 +73,8 @@ export class GolangVisitor extends AbstractExpressionVisitor {
         return out.join('\n');
     }
 
-    visitAssignmentExpression(expression: AssignmentExpression) {
-        return this.write(expression.expression);
+    visitAssignmentExpression(e: AssignmentExpression) {
+        return this.write(e.expression, !!e.modifier);
     }
 
 
@@ -209,7 +209,7 @@ export class GolangVisitor extends AbstractExpressionVisitor {
     }
 
 
-    write(s: Expression) {
+    write(s: Expression, escape: boolean = true) {
         if (!s) return '';
         let t: Expression | undefined;
 
@@ -218,18 +218,24 @@ export class GolangVisitor extends AbstractExpressionVisitor {
                 t = (s as AccessorExpression).resolvedAs!;
                 let key = this.visit(s);
 
-                switch ((t as PrimitiveExpression).type) {
-                    case Primitive.String:
-                        return `buf.WriteString(${key})`;
-                    case Primitive.Int:
-                        return `hero.FormatInt(int64(${key}), buf)`
-                    case Primitive.Float:
-                        return `hero.FormatFloat(float64(${key}), buf)`
-                    case Primitive.Date:
-                        return `buf.WriteString(${key}.Format(time.UnixDate))`
-                    case Primitive.Boolean:
-                        return `hero.FormatBool(${key}, buf)`
+                if (t instanceof PrimitiveExpression) {
+                    switch (t.type) {
+                        case Primitive.String:
+                            return `buf.WriteString(${escape ? 'hero.EscapeHTML(' + key + ')' : key})`;
+                        case Primitive.Int:
+                            return `hero.FormatInt(int64(${key}), buf)`
+                        case Primitive.Float:
+                            return `hero.FormatFloat(float64(${key}), buf)`
+                        case Primitive.Date:
+                            return `buf.WriteString(${key}.Format(time.UnixDate))`
+                        case Primitive.Boolean:
+                            return `hero.FormatBool(${key}, buf)`
+                    }
+                } else {
+                    throw new Error(`cannot write ${Token[t.nodeType]}`)
                 }
+
+
             } break;
             case Token.Raw:
                 return "buf.WriteString(`" + trim((s as RawExpression).value.replace(/\n/gm, '\\n')) + "`)"

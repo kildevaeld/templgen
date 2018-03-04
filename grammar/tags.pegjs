@@ -5,7 +5,7 @@ tag_assignment = Open '=' a:tag_assignment_modifier?  __ v:(tenary / FunctionCal
   return expression(Token.Assignment, v, a); 
 }
 
-tag_assignment_modifier = 's' / 'i' / 'f' / '!'
+tag_assignment_modifier = '!'
 
 tag_control_statements =  tag_if_stmt / tag_loop_stmt
 

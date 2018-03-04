@@ -11,7 +11,7 @@ export declare class GolangVisitor extends AbstractExpressionVisitor {
     trim: boolean;
     visitAccessor(expression: AccessorExpression): string;
     visitTemplateExpression(e: TemplateExpression): string;
-    visitAssignmentExpression(expression: AssignmentExpression): string | undefined;
+    visitAssignmentExpression(e: AssignmentExpression): string | undefined;
     visitRawExpression(expression: RawExpression): string | undefined;
     visitLoopExpression(e: LoopExpression): string;
     visitConditionalExpression(expression: ConditionalExpression): string;
@@ -29,7 +29,7 @@ export declare class GolangVisitor extends AbstractExpressionVisitor {
     visitParamterType(expression: ParameterExpression): string;
     visitArrayType(e: ArrayTypeExpression): any;
     visitUserType(expression: UserTypeExpression): string;
-    write(s: Expression): string | undefined;
+    write(s: Expression, escape?: boolean): string | undefined;
     visitVariable(e: VariableExpression): any;
     visitImport(e: ImportExpression): any;
 }
