@@ -210,10 +210,25 @@ export class UserValueVisitor extends AbstractExpressionVisitor implements PassV
             } else {
                 throw new SemanticError(e.position, 'invalid accessor ' + e.names[0]);
             }
+
+
+            var index = 0;
+            if (type!.nodeType == Token.Array && len > 1 && e.names[1].match(/\d+/)) {
+                type = (type as ArrayTypeExpression).type;
+                if (len == 2) {
+                    if (type instanceof UserTypeExpression)
+                        type = type.resolvedAs;
+
+                    e.resolvedAs = type instanceof PropertyExpression ? type.type : type;
+
+                    return e;
+                }
+                index++;
+            }
             if (type!.nodeType !== Token.UserType && len > 1) {
-                throw new SemanticError(e.position, `cannot get ${e.names[1]} of ${e.names[2]}`);
+                throw new SemanticError(e.position, `cannot get ${e.names[1]} of ${e.names[0]}`);
             } else if (type!.nodeType == Token.UserType && len > 1) {
-                let i = 0;
+                let i = index;
                 let ct = (type as UserTypeExpression).resolvedAs!;
                 while (++i < len) {
                     type = ct.properties.find(m => m.name == e.names[i]);
@@ -222,6 +237,9 @@ export class UserValueVisitor extends AbstractExpressionVisitor implements PassV
                     }
                     if (type.nodeType == Token.CustomType)
                         ct = type as any;
+                    else if (type.nodeType === Token.Array && i < len - 1 && e.names[i + 1].match(/\d+/)) {
+                        type = (type as ArrayTypeExpression).type;
+                    }
                 }
             }
 

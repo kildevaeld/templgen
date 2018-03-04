@@ -1,0 +1,9 @@
+
+type test {
+    name string
+}
+
+{% template accessorIndex(ctx []test) %}
+{%= ctx.0 %}
+{%= ctx.0.name %}
+{% end %}

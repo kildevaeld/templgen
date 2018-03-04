@@ -76,7 +76,7 @@ export function run() {
         }),
         handler: (argv) => {
             createAst(argv).catch(e => {
-                console.error(e.message);
+                console.error(e);
             })
         }
     })

@@ -5,7 +5,7 @@ variable = a:([a-zA-Z_]+) { return a.join(''); }
 	//= a:([a-zA-Z_]+) { return expression(Token.Variable, a.join('')); } 
 
 accessor 
-	= a:([a-zA-Z_]+) b:('.' b:([a-zA-Z_]+) { return b.join('')})* { return expression(Token.Accessor, [a.join('')].concat(b)); }  
+	= a:([a-zA-Z_]+) b:('.' b:([a-zA-Z_]+ / [0-9]+) { return b.join('')})* { return expression(Token.Accessor, [a.join('')].concat(b)); }  
 
 Open = '{%'
 
