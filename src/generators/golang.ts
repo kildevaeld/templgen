@@ -45,7 +45,15 @@ export class GolangVisitor extends AbstractExpressionVisitor {
     //incontext = false;
     trim = false;
     visitAccessor(expression: AccessorExpression) {
-        return expression.names.map((m, i) => i !== 0 ? ucfirst(m) : m).join('.');
+        let str = expression.names[0];
+        for (let i = 1, ii = expression.names.length; i < ii; i++) {
+            let v = expression.names[i];
+            if (v.match(/\d+/))
+                str += '[' + v + ']';
+            else
+                str += '.' + ucfirst(v);
+        }
+        return str;
     }
 
 
