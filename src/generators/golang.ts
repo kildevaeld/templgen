@@ -91,11 +91,27 @@ export class GolangVisitor extends AbstractExpressionVisitor {
 
     visitLoopExpression(e: LoopExpression) {
         let out = [];
-        if (e.key) out.push(`for ${this.visit(e.key)}, ${this.visit(e.value)}`);
-        else out.push('for _, ' + this.visit(e.value));
-        out.push(` := range ${this.visit(e.iterator)} {\n`);
-        out.push(this.visit(e.body))
-        out.push('\n}');
+
+        let iterator = (e.iterator as any).resolvedAs || e.iterator
+
+        if (iterator.nodeType == Token.Primitive) {
+            let primitive = iterator as PrimitiveExpression
+            let i = this.visit(e.value!)
+            out.push(`for ${i} := 0; ${i} < ${this.visit(e.iterator)}; ${i}++ {\n`)
+            if (e.key)
+                out.push(this.visit(e.key) + ' := ' + this.visit(e.iterator) + `[${i}]`)
+            out.push(this.visit(e.body))
+            out.push('\n}')
+        } else {
+            if (e.key) out.push(`for ${this.visit(e.key)}, ${this.visit(e.value)}`);
+            else out.push('for _, ' + this.visit(e.value));
+            out.push(` := range ${this.visit(e.iterator)} {\n`);
+            out.push(this.visit(e.body))
+            out.push('\n}');
+        }
+
+
+
         return out.join('');
     }
 
@@ -120,7 +136,13 @@ export class GolangVisitor extends AbstractExpressionVisitor {
                                 return ""
                         }
                     })();
+
+
             }
+
+            //condition = this.visit(e)
+        } else {
+            condition = this.visit(e);
         }
 
 
@@ -176,7 +198,7 @@ export class GolangVisitor extends AbstractExpressionVisitor {
 
         out.push(this.visit(expression.right));
 
-        return out.join(' ');
+        return out.reverse().join(' ');
     }
     visitLiteralExpression(expression: LiteralExpression) {
         switch (expression.type) {
@@ -264,6 +286,7 @@ export class GolangVisitor extends AbstractExpressionVisitor {
                             return `hero.FormatBool(${key}, buf)`
                     }
                 } else {
+                    console.log(s)
                     throw new Error(`cannot write '${Token[t.nodeType]}'`)
                 }
 
@@ -282,7 +305,10 @@ export class GolangVisitor extends AbstractExpressionVisitor {
                     }
                     return this.visit(m)
                 }).join(', ')}, buf)`
-            }
+            } break;
+            case Token.Arithmetic:
+                return `hero.FormatInt(int64(${this.visit(s)}), buf)`
+
             default:
                 throw new Error('write ' + s);
         }

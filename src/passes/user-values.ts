@@ -96,7 +96,8 @@ export class UserValueVisitor extends AbstractExpressionVisitor implements PassV
         if (!this.first) {
 
             let type = (e.iterator as any).resolvedAs as Expression;
-            if (type.nodeType != Token.Array) {
+
+            if (!(type.nodeType == Token.Array || (type.nodeType == Token.Primitive))) {
                 throw new Error('iterator is not a array');
             }
             if (e.key) {
@@ -104,7 +105,13 @@ export class UserValueVisitor extends AbstractExpressionVisitor implements PassV
                 this.scope[e.key.value] = e.key.resolvedAs;
             }
 
-            e.value.resolvedAs = (type as ArrayTypeExpression).type as any;
+            if (type instanceof ArrayTypeExpression) {
+                e.value.resolvedAs = (type as ArrayTypeExpression).type as any;
+            } else {
+                e.value.resolvedAs = type as any;
+            }
+
+
             this.scope[e.value.value] = e.value.resolvedAs;
         }
 
@@ -236,6 +243,7 @@ export class UserValueVisitor extends AbstractExpressionVisitor implements PassV
 
                     if (e.names[i].match(/\d+/)) {
                         type = (type as PropertyExpression).type;
+
                         if (type.nodeType !== Token.Array) {
                             throw new Error('cannot index a non array value');
                         }
