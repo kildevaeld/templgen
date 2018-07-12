@@ -28,8 +28,10 @@
   },
   "dependencies": {
     "@types/args": "^3.0.0",
+    "@types/camelcase": "^4.1.0",
     "@types/mz": "0.0.32",
     "@types/yargs": "^11.0.0",
+    "camelcase": "^5.0.0",
     "yargs": "^11.0.0"
   }
 }
