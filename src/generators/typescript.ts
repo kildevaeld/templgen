@@ -110,7 +110,7 @@ export class TypescriptVisitor extends AbstractExpressionVisitor {
             if (iterator.type != Primitive.Int && iterator != Primitive.Float)
                 throw new TypeError(`type ${Primitive[(iterator as PrimitiveExpression).type]} is not iterable`);
 
-            out.push(`  for (let __i = 0; __i < ${iter}; i++) {\n`);
+            out.push(`  for (let __i = 0; __i < ${iter}; __i++) {\n`);
             if (e.key) out.push(`    const ${this.visit(e.key)} = __i;\n`);
             out.push(`    const ${val} = __i\n`);
 
@@ -346,13 +346,14 @@ export class TypescriptVisitor extends AbstractExpressionVisitor {
     }
 
     visitImport(e: ImportExpression): any {
-        let base = Path.basename(e.path, Path.extname(e.path));
+        const ext = Path.extname(e.path)
+        let base = Path.basename(e.path, ext);
         const dir = Path.dirname(e.path);
         let imp = Path.join(dir, base);
         if (dir == '.') imp = "./" + base;
         base = camelCase(base);
         (e as any).ns = base;
-        return `import * as ${base} from '${imp}';`;
+        return `import * as ${base} from '${imp}${ext ? ext : ''}';`;
     }
 
 }
