@@ -185,6 +185,7 @@ export class ContextExpression extends Expression {
     imports: ContextExpression[] = [];
     file: string | undefined;
     id: string | undefined;
+
     constructor(location: ExpressionPosition, public value: BodyExpression) {
         super(location);
     }
@@ -225,6 +226,7 @@ export class VariableExpression extends Expression {
 export class ImportExpression extends Expression {
     nodeType = Token.Import;
     resolvedAs: ContextExpression | undefined;
+    importId?: string;
     constructor(location: ExpressionPosition, public path: string) {
         super(location);
     }

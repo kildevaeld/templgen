@@ -1,20 +1,21 @@
-import { TemplateExpression, RawExpression, LoopExpression, ConditionalExpression, VariableExpression, ArithmeticExpression, OperationExpression, LiteralExpression, FunctionCallExpression, TenaryExpression, BlockExpression, CommentExpression, MixinExpression, TypeExpression, ContextExpression, PropertyExpression, AssignmentExpression, TagAssignmentExpression, TagExpression, PrimitiveExpression, AccessorExpression, BodyExpression } from '../expressions';
+import { Expression, TemplateExpression, RawExpression, LoopExpression, ConditionalExpression, ArithmeticExpression, ImportExpression, OperationExpression, LiteralExpression, FunctionCallExpression, TenaryExpression, BlockExpression, CommentExpression, UserTypeExpression, ContextExpression, PropertyExpression, AssignmentExpression, PrimitiveExpression, AccessorExpression, BodyExpression, CustomTypeExpression, ParameterExpression, ArrayTypeExpression, VariableExpression } from '../expressions';
 import { AbstractExpressionVisitor } from '../visitor';
+import { Options } from './options';
+export interface TypeScriptOptions extends Options {
+    package: string;
+}
 export declare class TypescriptVisitor extends AbstractExpressionVisitor {
-    visitType(expression: TypeExpression): void;
-    visitMixin(expression: MixinExpression): void;
-    visitBody(expression: BodyExpression): any;
-    incontext: boolean;
+    options: TypeScriptOptions | undefined;
+    current?: ContextExpression;
+    parse(expression: ContextExpression, options: TypeScriptOptions): string;
+    visitBody(expression: BodyExpression): string;
     trim: boolean;
     visitAccessor(expression: AccessorExpression): string;
-    visitTemplateExpression(expression: TemplateExpression): string;
-    visitAssignmentExpression(expression: AssignmentExpression): string | undefined;
-    visitTagAssignmentExpression(expression: TagAssignmentExpression): any;
-    visitTagExpression(expression: TagExpression): void;
+    visitTemplateExpression(e: TemplateExpression): string;
+    visitAssignmentExpression(e: AssignmentExpression): string;
     visitRawExpression(expression: RawExpression): string;
     visitLoopExpression(e: LoopExpression): string;
     visitConditionalExpression(expression: ConditionalExpression): string;
-    visitVariableExpression(expression: VariableExpression): any;
     visitArithmeticExpression(expression: ArithmeticExpression): string;
     visitBinaryOperationExpression(expression: OperationExpression): string;
     visitLiteralExpression(expression: LiteralExpression): string | undefined;
@@ -22,7 +23,14 @@ export declare class TypescriptVisitor extends AbstractExpressionVisitor {
     visitTenaryExpression(expression: TenaryExpression): void;
     visitBlockExpression(expression: BlockExpression): void;
     visitCommentExpression(expression: CommentExpression): string;
-    visitContextExpression(expression: ContextExpression): void;
-    visitPropertyExpression(expression: PropertyExpression): string;
-    visitPrimitiveExpression(expression: PrimitiveExpression): "string" | "number" | undefined;
+    visitContextExpression(expression: ContextExpression): any;
+    visitPropertyExpression(e: PropertyExpression): string;
+    visitPrimitiveExpression(expression: PrimitiveExpression): "string" | "number" | "boolean" | "Date";
+    visitCustomType(e: CustomTypeExpression): string;
+    visitParamterType(expression: ParameterExpression): string;
+    visitArrayType(e: ArrayTypeExpression): any;
+    visitUserType(expression: UserTypeExpression): string;
+    write(s: Expression, escape?: boolean): string;
+    visitVariable(e: VariableExpression): any;
+    visitImport(e: ImportExpression): any;
 }

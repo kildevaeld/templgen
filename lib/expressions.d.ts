@@ -153,6 +153,7 @@ export declare class ImportExpression extends Expression {
     path: string;
     nodeType: Token;
     resolvedAs: ContextExpression | undefined;
+    importId?: string;
     constructor(location: ExpressionPosition, path: string);
 }
 export declare function createExpression(type: Token, position: ExpressionPosition, ...args: any[]): Expression;

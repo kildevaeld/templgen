@@ -1,5 +1,6 @@
 import * as yargs from 'yargs';
 import { GolangVisitor } from '../generators/golang';
+import { TypescriptVisitor } from '../generators/typescript';
 import * as Path from 'path';
 import * as fs from 'mz/fs';
 import { parse } from '../template_parser';
@@ -7,6 +8,10 @@ import { passes } from '../passes';
 
 async function generateFiles(argv: yargs.Arguments) {
     let files = argv.files as string[];
+
+    if (argv.name != 'golang' && argv.name != 'typescript') {
+        throw new Error('could not find generator');
+    }
 
     const data = await Promise.all<{ file: string; buffer: Buffer }>(files.map((m: string) => fs.readFile(m).then(buf => ({
         file: Path.resolve(m),
@@ -21,7 +26,7 @@ async function generateFiles(argv: yargs.Arguments) {
 
     asts = await Promise.all(asts.map(m => passes(m)));
 
-    let gen = new GolangVisitor();
+    let gen = argv.name === 'golang' ? new GolangVisitor : new TypescriptVisitor
 
     let output_data = asts.map(m => ({
         content: gen.parse(m, { package: 'template' }),
@@ -52,6 +57,9 @@ export function generateCommand(yargs: yargs.Argv) {
         builder: (yargs) => yargs.option('output', {
             alias: 'o',
             type: 'string',
+        }).option('name', {
+            alias: 'n',
+            type: 'string'
         }),
         handler: (argv) => {
             generateFiles(argv);

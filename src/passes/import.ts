@@ -70,6 +70,8 @@ export class ImportPass implements PassVisitor {
 
                 e.imports.push(ast);
 
+                i.importId = ast.id;
+
             } catch (e) {
                 errors.push(e);
             }
