@@ -231,7 +231,7 @@ export class GolangVisitor extends AbstractExpressionVisitor {
         return out;
     }
     visitPropertyExpression(e: PropertyExpression) {
-        return `${ucfirst(e.name)} ${this.visit(e.type)} `
+        return `${ucfirst(e.name)} ${(e.type.nodeType == Token.UserType ? '*' : '') + this.visit(e.type)} `
     }
     visitPrimitiveExpression(expression: PrimitiveExpression) {
         switch (expression.type) {
@@ -244,7 +244,8 @@ export class GolangVisitor extends AbstractExpressionVisitor {
     }
 
     visitCustomType(e: CustomTypeExpression) {
-        let out = [`type ${ucfirst(e.name)} struct {\n`];
+        let out = [`type ${ucfirst(e.name)} struct {
+\n`];
         out.push(e.properties.map(m => this.visit(m)).join('\n'));
         out.push('\n}\n')
         return out.join('');
@@ -296,15 +297,17 @@ export class GolangVisitor extends AbstractExpressionVisitor {
                 return "buf.WriteString(\"" + trim((s as RawExpression).value.replace(/\n/gm, '\\n')).replace(/"/gm, '\\"') + "\")"
             case Token.FunctionCall: {
                 let e = (s as FunctionCallExpression);
-                return `${ucfirst(e.name)}(${e.parameters.map(m => {
-                    if (m.nodeType === Token.Accessor) {
-                        let a = m as AccessorExpression;
-                        if (a.resolvedAs!.nodeType === Token.CustomType) {
-                            return '&' + this.visit(m);
+                return `${ucfirst(e.name)} (${
+                    e.parameters.map(m => {
+                        if (m.nodeType === Token.Accessor) {
+                            let a = m as AccessorExpression;
+                            if (a.resolvedAs!.nodeType === Token.CustomType) {
+                                return '&' + this.visit(m);
+                            }
                         }
-                    }
-                    return this.visit(m)
-                }).join(', ')}, buf)`
+                        return this.visit(m)
+                    }).join(', ')
+                    }, buf)`
             } break;
             case Token.Arithmetic:
                 return `hero.FormatInt(int64(${this.visit(s)}), buf)`

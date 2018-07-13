@@ -19,6 +19,11 @@ export class SemanticError extends Error {
     }
 }
 
+function getInner(e: Expression) {
+    if ((e as any).resolvedAs) return getInner((e as any).resolvedAs);
+    return e;
+}
+
 export class UserValueVisitor extends AbstractExpressionVisitor implements PassVisitor {
 
     resolves: AccessorExpression[] = [];
@@ -156,23 +161,25 @@ export class UserValueVisitor extends AbstractExpressionVisitor implements PassV
             for (let i = 0, ii = e.parameters.length; i < ii; i++) {
                 let p1 = e.parameters[i],
                     p2 = templ.parameters[i].type;
-                let pt1 = (p1 as any).resolvedAs || p1,
-                    pt2 = (p2 as any).resolvedAs || p2;
+                let pt1 = getInner(p1), // (p1 as any).resolvedAs || p1,
+                    pt2 = getInner(p2); //(p2 as any).resolvedAs || p2;
 
 
                 if (pt1.nodeType !== pt2.nodeType) {
+                    console.log(pt1)
+                    console.log(pt2);
                     throw new SemanticError(e.position, `invalid parameter at #${i}`);
                 }
 
                 switch (pt1.nodeType) {
                     case Token.Primitive: {
                         if (pt1.type !== pt2.type) {
-                            throw new SemanticError(e.position, `invalid parameter at #${i}`);
+                            throw new SemanticError(e.position, `invalid  primitive type parameter at #${i}`);
                         }
                     } break;
                     case Token.CustomType: {
                         if (pt1.name !== pt2.name) {
-                            throw new SemanticError(e.position, `invalid paramter at #${i}`);
+                            throw new SemanticError(e.position, `invalid custom type paramter at #${i}`);
                         }
                     } break;
                 }
@@ -255,6 +262,7 @@ export class UserValueVisitor extends AbstractExpressionVisitor implements PassV
 
                     } else {
                         type = ct.properties.find(m => m.name == e.names[i]);
+                        //console.log(e.names, i, ct)
                     }
 
                     if (!type) {
@@ -265,11 +273,13 @@ export class UserValueVisitor extends AbstractExpressionVisitor implements PassV
                         ct = type as any;
                     else if (type.nodeType === Token.Array && i < len - 1 && e.names[i + 1].match(/\d+/)) {
                         type = (type as ArrayTypeExpression).type;
+                        i++;
                         if (type.nodeType === Token.UserType)
                             ct = type as any;
 
                     }
                 }
+
             }
 
             if (type instanceof UserTypeExpression)

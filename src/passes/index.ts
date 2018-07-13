@@ -42,6 +42,7 @@ export async function passes(e: ContextExpression) {
         try {
             copy = await tmp.parse(copy)
         } catch (e) {
+            throw e;
             errors[tmp.name] = e;
         }
     }

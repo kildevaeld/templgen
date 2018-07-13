@@ -110,7 +110,7 @@ export class TypescriptVisitor extends AbstractExpressionVisitor {
             if (iterator.type != Primitive.Int && iterator != Primitive.Float)
                 throw new TypeError(`type ${Primitive[(iterator as PrimitiveExpression).type]} is not iterable`);
 
-            out.push(`  for (let __i = 0; __i < ${iter}; __i++) {\n`);
+            out.push(`  for (let __i = 0; __i < ${iter}; i++) {\n`);
             if (e.key) out.push(`    const ${this.visit(e.key)} = __i;\n`);
             out.push(`    const ${val} = __i\n`);
 
